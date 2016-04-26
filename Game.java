@@ -140,6 +140,16 @@ public class Game {
         }
     }
 
+    private boolean isForward(Direction d) {
+        switch (d) {
+            case NorthEeast:
+            case NorthWest:
+                return status == Status.TurnWhitePlayer;
+            default:
+                return status == Status.TurnBlackPlayer;
+        }
+    }
+
     private void updateViews() {
         views.stream().forEach((v) -> {
             v.setBoard(board);
