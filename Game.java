@@ -50,6 +50,20 @@ public class Game {
         return false;
     }
 
+    private void initializeBoard() {
+        for (int x = 0; x < BOARD_SIZE; x++) {
+            for (int y = 0; y < BOARD_SIZE; y++) {
+                if (x % 2 != y % 2) {
+                    if (y <= 4) {
+                        board.setPiece(new Point(x, y), Piece.Black);
+                    } else if (y >= 7) {
+                        board.setPiece(new Point(x, y), Piece.White);
+                    }
+                }
+            }
+        }
+    }
+
     private void calcStartingPoints() {
         startingPoints.clear();
         Point p;
