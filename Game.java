@@ -1,6 +1,7 @@
 package CheckersFramework;
 
 import static CheckersFramework.Color.*;
+import java.util.Collection;
 import java.util.LinkedList;
 
 /**
@@ -15,12 +16,14 @@ public class Game {
     private final MoveGetter input;
     private final LinkedList<View> views;
     private Status status;
-
+    private boolean canCapturePiece;
+    
     public Game(MoveGetter input) {
         this.board = new Board(BOARD_SIZE);
         this.input = input;
         this.views = new LinkedList<>();
         this.status = Status.TurnWhitePlayer;
+        this.canCapturePiece = false;
     }
 
     public void start() {
