@@ -10,13 +10,14 @@ import java.util.LinkedList;
  */
 public class Game {
 
+    private final static int BOARD_SIZE = 10;
     private final Board board;
     private final MoveGetter input;
     private final LinkedList<View> views;
     private Status status;
 
     public Game(MoveGetter input) {
-        this.board = new Board(10);
+        this.board = new Board(BOARD_SIZE);
         this.input = input;
         this.views = new LinkedList<>();
         this.status = Status.TurnWhitePlayer;
