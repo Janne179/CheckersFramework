@@ -77,6 +77,58 @@ public class Game {
         }
     }
 
+    private void calcPossibleMoves(){
+        possibleMoves.clear();
+        Move m;
+        for (Point p : startingPoints) {
+            for (Direction d : Direction.values()) {
+                if (board.getPiece(p).isKing()) {
+                    for (int i = 1; i < BOARD_SIZE; i++) {
+                        m = new Move(p,d,i);
+                        if(isKingMove(m)) {
+                            possibleMoves.add(m);
+                        }
+                    }
+                } else {
+                    Point p1 = new Point(p.getX()+d.getDeltaX(), p.getY()+d.getDeltaY());
+                    Point p2 = new Point(p.getX()+2*d.getDeltaX(), p.getY()+2*d.getDeltaY());
+                    if(isForward(d)) {
+                        m = null;
+                        if(board.getPiece(p1) == null && board.contains(p1)){
+                            m = new Move(p,d,1);
+                        }
+                        if(
+                                board.getPiece(p1) != null
+                                && board.getPiece(p1).getColor() != board.getPiece(p).getColor()
+                                && board.contains(p2)
+                                && board.getPiece(p2) == null
+                        ){
+                            m = new Move(p,d,2);
+                            canCapturePiece = true;
+                        }
+                        if(m != null){
+                            possibleMoves.add(m);
+                        }
+                    }
+                    else{
+                        if(
+                                board.getPiece(p1) != null
+                                && board.getPiece(p1).getColor() != board.getPiece(p).getColor()
+                                && board.contains(p2)
+                                && board.getPiece(p2) == null
+                        ){
+                            m = new Move(p,d,2);
+                            if(m != null){
+                                possibleMoves.add(m);
+                            }
+                            canCapturePiece = true;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
     private boolean hasRightColor(Point p) {
         switch (status) {
             case TurnBlackPlayer:
@@ -95,7 +147,7 @@ public class Game {
             v.invalidate();
         });
     }
-
+    
     /**
      * @require m must be valid
      * @param m
