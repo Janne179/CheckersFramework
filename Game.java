@@ -16,14 +16,16 @@ public class Game {
     private final MoveGetter input;
     private final LinkedList<View> views;
     private final Collection<Point> startingPoints;
+    private final Collection<Move> possibleMoves;
     private Status status;
     private boolean canCapturePiece;
-    
+
     public Game(MoveGetter input) {
         this.board = new Board(BOARD_SIZE);
         this.input = input;
         this.views = new LinkedList<>();
         this.startingPoints = new LinkedList<>();
+        this.possibleMoves = new LinkedList<>();
         this.status = Status.TurnWhitePlayer;
         this.canCapturePiece = false;
     }
@@ -79,32 +81,18 @@ public class Game {
             v.invalidate();
         });
     }
-    
-    private void initialize() {
-        //set white pieces
-        for (int y = 10; y <= 7; y--) {
-            int x = 0;
-            if (y % 2 == 0) {
-                x = 0;
-            } else {
-                x = 1;
+
+    /**
+     * @require m must be valid
+     * @param m
+     */
+    public void makeMove(Move m){
+            Piece p = board.getPiece(m.getStart());
+            board.setPiece(m.getEndpoint(),p);
+            board.setPiece(m.getStart(),null);
+            for(int dt = 1; dt <= m.getDeltaX(); dt++){
+                board.setPiece(new Point(m.getStart().getX()+dt, m.getStart().getY()+dt), null);
             }
-            for (; x <= 10; x = x + 2) {
-                board.setPiece(new Point(x,y), Piece.White);
-            }
-        }
-        //set black pieces
-        for (int y = 0; y <= 4; y++) {
-            int x = 0;
-            if (y % 2 == 0) {
-                x = 1;
-            } else {
-                x = 0;
-            }
-            for (; x <= 10; x = x + 2) {
-                board.setPiece(new Point(x,y), Piece.Black);
-            }
-        }
     }
 
 }
