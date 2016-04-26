@@ -41,7 +41,7 @@ public class Move {
     public Point getStart() {
         return start;
     }
-    
+
     /**
      * @return the endpoint of the move 
      */
@@ -49,4 +49,11 @@ public class Move {
         return new Point(this.getStart().getX()+this.getDeltaX(), this.getStart().getY()+this.getDeltaY());
     }
     
+    /**
+     * @return the scalar
+     */
+    public int getScalar() {
+        return scalar;
+    }
+
 }
