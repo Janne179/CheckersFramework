@@ -43,12 +43,12 @@ public class Move {
     }
 
     /**
-     * @return the endpoint of the move 
+     * @return the endpoint of the move
      */
     public Point getEndpoint() {
         return new Point(this.getStart().getX()+this.getDeltaX(), this.getStart().getY()+this.getDeltaY());
     }
-    
+
     /**
      * @return the scalar
      */
