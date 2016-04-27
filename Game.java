@@ -11,7 +11,7 @@ import java.util.LinkedList;
  */
 public class Game {
 
-    private final static int BOARD_SIZE = 10;
+    private static final int BOARD_SIZE = 10;
     private final Board board;
     private final MoveGetter input;
     private final LinkedList<View> views;
@@ -31,8 +31,8 @@ public class Game {
     }
 
     public void start() {
+        initializeBoard();
         /* **** TODO **** */
-        // inititalize board
         // manage game status
         // get moves - input.getMove()
         // validate moves - isValid(Move m)
@@ -70,7 +70,7 @@ public class Game {
         for (int x = 0; x < BOARD_SIZE; x++) {
             for (int y = 0; y < BOARD_SIZE; y++) {
                 p = new Point(x, y);
-                if (hasRightColor(p)) {
+                if (activePieceAt(p)) {
                     startingPoints.add(p);
                 }
             }
@@ -129,7 +129,7 @@ public class Game {
         }
     }
     
-    private boolean hasRightColor(Point p) {
+    private boolean activePieceAt(Point p) {
         switch (status) {
             case TurnBlackPlayer:
                 return board.getPiece(p).getColor() == Black;
@@ -150,6 +150,41 @@ public class Game {
         }
     }
 
+    /**
+     * Check if a move is a king move.
+     *
+     * @param m the move to check
+     * @return whether the move is a king move
+     */
+    private boolean isKingMove(Move m) {
+        int ownPieces = 0;
+        int opponentPieces = 0;
+        Point p;
+        for (int i = 1; i < m.getScalar(); i++) {
+            p = new Point(
+                    m.getStart().getX() + m.getDirection().getDeltaX() * i,
+                    m.getStart().getY() + m.getDirection().getDeltaY() * i
+            );
+            if (!board.isEmpty(p)) {
+                if (activePieceAt(p)) {
+                    ownPieces++;
+                } else {
+                    opponentPieces++;
+                }
+            }
+        }
+        p = new Point(
+                m.getStart().getX() + m.getDeltaX(),
+                m.getStart().getY() + m.getDeltaY()
+        );
+        if(opponentPieces == 1){
+            canCapturePiece = true;
+        }
+        return board.isEmpty(p)
+                && ownPieces == 0
+                && opponentPieces <= 1;
+    }
+
     private void updateViews() {
         views.stream().forEach((v) -> {
             v.setBoard(board);
@@ -164,12 +199,20 @@ public class Game {
      * @param m
      */
     public void makeMove(Move m){
-            Piece p = board.getPiece(m.getStart());
-            board.setPiece(m.getEndpoint(),p);
-            board.setPiece(m.getStart(),null);
-            for(int dt = 1; dt < m.getScalar(); dt++){
-                board.setPiece(new Point(m.getStart().getX()+dt, m.getStart().getY()+dt), null);
+        Piece p = board.getPiece(m.getStart());
+        board.setPiece(m.getEndpoint(),p);
+        board.setPiece(m.getStart(),null);
+        for(int dt = 1; dt < m.getScalar(); dt++){
+            board.setPiece(new Point(m.getStart().getX()+dt, m.getStart().getY()+dt), null);
+        }
+        for(int x = 0 ; x<= BOARD_SIZE ;x++){
+            if(activePieceAt(new Point(x,BOARD_SIZE))){
+                board.setPiece(new Point(x,BOARD_SIZE), Piece.BlackKing);
             }
+            if(activePieceAt(new Point(x,0))){
+                board.setPiece(new Point(x,0), Piece.WhiteKing);
+            }
+        }
     }
 
 }

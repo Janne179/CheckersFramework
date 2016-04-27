@@ -44,4 +44,15 @@ public class Board {
                 && p.getY() < board.length;
     }
 
+    /**
+     * Check whether a point is empty.
+     *
+     * @param p the point to check
+     * @return whether the point is empty
+     */
+    public boolean isEmpty(Point p) {
+        return this.contains(p)
+                && board[p.getX()][p.getY()] == null;
+    }
+
 }

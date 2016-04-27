@@ -56,4 +56,11 @@ public class Move {
         return scalar;
     }
 
+    /**
+     * @return the direction
+     */
+    protected Direction getDirection() {
+        return direction;
+    }
+
 }
