@@ -34,10 +34,20 @@ public class Game {
         initializeBoard();
         /* **** TODO **** */
         // manage game status
+        calcStartingPoints();
+        calcPossibleMoves();
+        if(possibleMoves.isEmpty()){
+            status = Status.GameEnded;
+        }
         // get moves - input.getMove()
+        Move m = input.getMove();
         // validate moves - isValid(Move m)
         // execute moves
+        if(possibleMoves.contains(m)){
+            makeMove(m);
+        }
         // update views - updateViews()
+        updateViews();
     }
 
     private boolean isValid(Move m) {
@@ -77,7 +87,7 @@ public class Game {
         }
     }
 
-    private void calcPossibleMoves(){
+    private void addCapturingMoves(){
         possibleMoves.clear();
         Move m;
         for (Point p : startingPoints) {
@@ -86,47 +96,62 @@ public class Game {
                     for (int i = 1; i < BOARD_SIZE; i++) {
                         m = new Move(p,d,i);
                         if(isKingMove(m)) {
-                            possibleMoves.add(m);
+                            if(canCapturePiece){
+                                possibleMoves.add(m);
+                                canCapturePiece = false;
+                            }
                         }
                     }
                 } else {
                     Point p1 = new Point(p.getX()+d.getDeltaX(), p.getY()+d.getDeltaY());
                     Point p2 = new Point(p.getX()+2*d.getDeltaX(), p.getY()+2*d.getDeltaY());
-                    if(isForward(d)) {
-                        m = null;
-                        if(board.getPiece(p1) == null && board.contains(p1)){
-                            m = new Move(p,d,1);
-                        }
-                        if(
-                                board.getPiece(p1) != null
-                                && board.getPiece(p1).getColor() != board.getPiece(p).getColor()
-                                && board.contains(p2)
-                                && board.getPiece(p2) == null
-                        ){
-                            m = new Move(p,d,2);
-                            canCapturePiece = true;
-                        }
-                        if(m != null){
-                            possibleMoves.add(m);
+                    if(
+                            board.getPiece(p1) != null
+                            && board.getPiece(p1).getColor() != board.getPiece(p).getColor()
+                            && board.contains(p2)
+                            && board.getPiece(p2) == null
+                    ){
+                        m = new Move(p,d,2);
+                    }
+                    if(m != null){
+                        possibleMoves.add(m);
+                    }
+                }
+            }
+        }
+    }
+    
+    private void addNormalMoves(){
+        Move m;
+        if(possibleMoves.isEmpty()){
+            for (Point p : startingPoints) {
+                for (Direction d : Direction.values()) {
+                    if (board.getPiece(p).isKing()) {
+                        for (int i = 1; i < BOARD_SIZE; i++) {
+                            m = new Move(p,d,i);
+                            if(isKingMove(m)) {
+                                possibleMoves.add(m);
+                            }
                         }
                     }
                     else{
-                        if(
-                                board.getPiece(p1) != null
-                                && board.getPiece(p1).getColor() != board.getPiece(p).getColor()
-                                && board.contains(p2)
-                                && board.getPiece(p2) == null
-                        ){
-                            m = new Move(p,d,2);
+                        m = null;
+                        Point p1 = new Point(p.getX()+d.getDeltaX(), p.getY()+d.getDeltaY());
+                        if(board.getPiece(p1) == null && board.contains(p1)){
+                            m = new Move(p,d,1);
                             if(m != null){
                                 possibleMoves.add(m);
                             }
-                            canCapturePiece = true;
                         }
                     }
                 }
             }
         }
+    }
+    
+    private void calcPossibleMoves(){
+        addCapturingMoves();
+        addNormalMoves();
     }
     
     private boolean activePieceAt(Point p) {
