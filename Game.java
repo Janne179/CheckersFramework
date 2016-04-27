@@ -159,6 +159,7 @@ public class Game {
     }
     
     /**
+     * TODO crown piece if on other side
      * @require m must be valid
      * @param m
      */
@@ -166,7 +167,7 @@ public class Game {
             Piece p = board.getPiece(m.getStart());
             board.setPiece(m.getEndpoint(),p);
             board.setPiece(m.getStart(),null);
-            for(int dt = 1; dt <= m.getDeltaX(); dt++){
+            for(int dt = 1; dt < m.getScalar(); dt++){
                 board.setPiece(new Point(m.getStart().getX()+dt, m.getStart().getY()+dt), null);
             }
     }
